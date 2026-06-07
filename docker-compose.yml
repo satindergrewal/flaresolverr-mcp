@@ -1,0 +1,24 @@
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ:-UTC}
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
+  flaresolverr-mcp:
+    build: .
+    container_name: flaresolverr-mcp
+    environment:
+      - FLARESOLVERR_URL=http://flaresolverr:8191
+      - FLARESOLVERR_TIMEOUT=${FLARESOLVERR_TIMEOUT:-60000}
+    ports:
+      - "8192:8192"
+    depends_on:
+      - flaresolverr
+    restart: unless-stopped
